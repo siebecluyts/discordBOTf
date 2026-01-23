@@ -155,13 +155,18 @@ client.on('messageCreate', async message => {
     return message.channel.send(helpText);
   }
 
-  // !say
-  if (cmd === '!say') {
-    const text = args.join(' ');
-    if (!text) return message.reply('❌ Geef tekst mee.');
-    await message.delete();
-    return message.channel.send(text);
-  }
+// !say
+if (cmd === '!say') {
+  let text = args.join(' ');
+  if (!text) return message.reply('❌ Geef tekst mee.');
+
+  // <br> → nieuwe lijn
+  text = text.replace(/<br\s*\/?>/gi, '\n');
+
+  await message.delete();
+  return message.channel.send(text);
+}
+
 
   // !news
   if (cmd === '!news') {
@@ -183,6 +188,7 @@ client.once('ready', async () => {
 
 // ================== LOGIN ==================
 client.login(DISCORD_TOKEN);
+
 
 
 
