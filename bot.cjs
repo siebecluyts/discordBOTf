@@ -4,9 +4,9 @@ console.log("🚀 bot.cjs gestart");
 const { Client, GatewayIntentBits, Partials, EmbedBuilder } = require("discord.js");
 const fs = require("fs");
 const fetch = require("node-fetch");
-
+require('dotenv').config();
 // ================== CONFIG ==================
-const DISCORD_TOKEN = "MTQ1MDg1MDY2NzM0MTAyNTQ2Mw.GGLQno.wVcyUqWXHXco3UVSktnpdOhN03Vbk1c1TugwjM"; // je bot token
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN; // je bot token
 const CLIENT_ID = "1450850667341025463"; // bot client ID
 const GUILD_ID = "1450853381680660783"; // server ID voor testen
 const CHANNEL_ID = "1463876243362680976"; // kanaal waar nieuws gepost wordt
@@ -163,3 +163,4 @@ client.once('ready', async () => {
 
 // ================== LOGIN ==================
 client.login(DISCORD_TOKEN);
+
