@@ -3,7 +3,7 @@ console.log("🚀 bot.cjs gestart");
 
 const { Client, GatewayIntentBits, Partials, EmbedBuilder } = require("discord.js");
 const fs = require("fs");
-const fetch = require("node-fetch");
+
 require('dotenv').config();
 // ================== CONFIG ==================
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN; // je bot token
@@ -41,7 +41,7 @@ function saveLastArticleId(id) {
 
 // ================== FETCH ARTICLES ==================
 async function fetchArticles() {
-  const res = await fetch(ARTICLES_URL);
+const res = await fetch(ARTICLES_URL);
   if (!res.ok) throw new Error('Failed to fetch articles.json');
   return await res.json();
 }
@@ -129,6 +129,27 @@ client.on('messageCreate', async message => {
 });
 
 // ================== USER COMMANDS ==================
+// help command
+if (cmd === '!help') {
+  const helpText = `
+📌 **GDN Discord Bot – Commands**
+
+👤 **Voor iedereen**
+• \`!help\` → toont dit bericht
+• \`!say <tekst>\` → laat de bot iets zeggen
+• \`!news\` → post het nieuwste GDN artikel
+
+🛡 **Moderators**
+• \`!kick @user\`
+• \`!ban @user\`
+• \`!mute @user\` (10 minuten)
+
+🚫 Scheldwoorden worden automatisch verwijderd.
+`;
+
+  message.channel.send(helpText);
+}
+
 client.on('messageCreate', async message => {
   if (message.author.bot) return;
 
@@ -163,4 +184,5 @@ client.once('ready', async () => {
 
 // ================== LOGIN ==================
 client.login(DISCORD_TOKEN);
+
 
