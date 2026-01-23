@@ -129,9 +129,15 @@ client.on('messageCreate', async message => {
 });
 
 // ================== USER COMMANDS ==================
-// help command
-if (cmd === '!help') {
-  const helpText = `
+client.on('messageCreate', async message => {
+  if (message.author.bot) return;
+
+  const args = message.content.trim().split(/\s+/);
+  const cmd = args.shift().toLowerCase();
+
+  // !help
+  if (cmd === '!help') {
+    const helpText = `
 📌 **GDN Discord Bot – Commands**
 
 👤 **Voor iedereen**
@@ -146,29 +152,22 @@ if (cmd === '!help') {
 
 🚫 Scheldwoorden worden automatisch verwijderd.
 `;
-
-  message.channel.send(helpText);
-}
-
-client.on('messageCreate', async message => {
-  if (message.author.bot) return;
-
-  const args = message.content.split(' ');
-  const cmd = args.shift().toLowerCase();
-
-  // say command
-  if (cmd === '!say') {
-    const text = args.join(' ');
-    if (!text) return message.reply('Geef wat tekst op!');
-    await message.delete();
-    message.channel.send(text);
+    return message.channel.send(helpText);
   }
 
-  // news command
+  // !say
+  if (cmd === '!say') {
+    const text = args.join(' ');
+    if (!text) return message.reply('❌ Geef tekst mee.');
+    await message.delete();
+    return message.channel.send(text);
+  }
+
+  // !news
   if (cmd === '!news') {
     const channel = message.guild.channels.cache.get(CHANNEL_ID);
-    if (!channel) return message.reply('News kanaal niet gevonden!');
-    postNews(channel);
+    if (!channel) return message.reply('❌ News kanaal niet gevonden.');
+    return postNews(channel);
   }
 });
 
@@ -184,5 +183,6 @@ client.once('ready', async () => {
 
 // ================== LOGIN ==================
 client.login(DISCORD_TOKEN);
+
 
 
