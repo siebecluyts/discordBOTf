@@ -189,6 +189,18 @@ client.once('ready', async () => {
 // ================== LOGIN ==================
 client.login(DISCORD_TOKEN);
 
+// ================== KEEP RENDER ALIVE ==================
+const http = require("http");
+
+const PORT = process.env.PORT || 3000;
+
+http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("Bot is running");
+}).listen(PORT, () => {
+  console.log("🌐 HTTP server actief op poort", PORT);
+});
+
 
 
 
