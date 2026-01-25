@@ -86,7 +86,7 @@ function isModerator(member) {
 }
 
 // ================== BAD WORD FILTER ==================
-const badWords = ['badword1','badword2','scheldwoord'];
+const badWords = ['fuck','shit','ass', 'penis', 'vagina', 'nigga', 'nigger', 'tits', 'bitch'];
 
 client.on('messageCreate', async message => {
   if (message.author.bot) return;
@@ -94,7 +94,7 @@ client.on('messageCreate', async message => {
   // check bad words
   if (badWords.some(w => message.content.toLowerCase().includes(w))) {
     await message.delete();
-    message.channel.send(`${message.author}, dat woord is niet toegestaan!`).then(msg => setTimeout(() => msg.delete(), 5000));
+    message.channel.send(`${message.author}, That word is not allowed!`).then(msg => setTimeout(() => msg.delete(), 5000));
   }
 
   // ------------------------- MOD COMMANDS -------------------------
@@ -108,7 +108,7 @@ client.on('messageCreate', async message => {
     const member = message.mentions.members.first();
     if (!member) return message.reply('No member mentioned!');
     await member.kick();
-    message.channel.send(`${member.user.tag} is gekickt!`);
+    message.channel.send(`${member.user.tag} is kicked!`);
   }
 
   // ban
@@ -116,7 +116,7 @@ client.on('messageCreate', async message => {
     const member = message.mentions.members.first();
     if (!member) return message.reply('No member mentioned!');
     await member.ban();
-    message.channel.send(`${member.user.tag} is gebanned!`);
+    message.channel.send(`${member.user.tag} is banned!`);
   }
 
   // mute (10 min)
@@ -124,7 +124,7 @@ client.on('messageCreate', async message => {
     const member = message.mentions.members.first();
     if (!member) return message.reply('No member mentioned!');
     await member.timeout(10*60*1000);
-    message.channel.send(`${member.user.tag} is gemute voor 10 min!`);
+    message.channel.send(`${member.user.tag} is muted for 10 minutes!`);
   }
 });
 
