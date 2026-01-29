@@ -63,10 +63,9 @@ async function postNews(channel) {
       .setTitle(newest.title)
       .setURL(`https://siebecluyts.github.io/gdn/article?id=${newest.id}`)
       .setDescription(newest.content || 'New article published!')
-      .setAuthor({ name: newest.author || 'GDN' })
       .setColor(0x008793)
       .setImage(`https://siebecluyts.github.io/gdn/assets/articlethumbnail/${newest.id}.png`)
-      .setFooter({ text: 'GDN • New article' })
+      .setFooter({ text: 'GDN • New article • @news' })
       .setTimestamp(new Date(newest.date || Date.now()));
 
     await channel.send({ embeds: [embed] });
@@ -200,6 +199,7 @@ http.createServer((req, res) => {
 }).listen(PORT, () => {
   console.log("🌐 HTTP server actief op poort", PORT);
 });
+
 
 
 
