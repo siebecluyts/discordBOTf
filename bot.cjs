@@ -62,10 +62,10 @@ async function postNews(channel) {
     const embed = new EmbedBuilder()
       .setTitle(newest.title)
       .setURL(`https://siebecluyts.github.io/gdn/article?id=${newest.id}`)
-      .setDescription(newest.content || 'New article published!')
+      .setDescription(newest.content || 'New article published!  @1463876504122560616')
       .setColor(0x008793)
       .setImage(`https://siebecluyts.github.io/gdn/assets/articlethumbnail/${newest.id}.png`)
-      .setFooter({ text: 'GDN • New article • @news' })
+      .setFooter({ text: 'GDN • New article' })
       .setTimestamp(new Date(newest.date || Date.now()));
 
     await channel.send({ embeds: [embed] });
