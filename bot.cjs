@@ -59,22 +59,31 @@ async function postNews(channel) {
     const lastId = getLastArticleId();
     if (String(newest.id) === String(lastId)) return;
 
+    const NEWS_ROLE_ID = "1463876504122560616";
+
     const embed = new EmbedBuilder()
       .setTitle(newest.title)
       .setURL(`https://siebecluyts.github.io/gdn/article?id=${newest.id}`)
-      .setDescription(newest.content || 'New article published!  @1463876504122560616')
+      .setDescription(newest.content || 'New article published!')
       .setColor(0x008793)
       .setImage(`https://siebecluyts.github.io/gdn/assets/articlethumbnail/${newest.id}.png`)
       .setFooter({ text: 'GDN • New article' })
       .setTimestamp(new Date(newest.date || Date.now()));
 
-    await channel.send({ embeds: [embed] });
+    await channel.send({
+      content: `<@&${NEWS_ROLE_ID}> 📰 **Nieuw GDN artikel!**`,
+      embeds: [embed],
+      allowedMentions: { roles: [NEWS_ROLE_ID] }
+    });
+
     saveLastArticleId(newest.id);
     console.log("📰 Artikel gepost:", newest.title);
+
   } catch (err) {
     console.error("News error:", err.message);
   }
 }
+
 
 // ================== HELPERS ==================
 function isModerator(member) {
