@@ -71,7 +71,7 @@ async function postNews(channel) {
       .setTimestamp(new Date(newest.date || Date.now()));
 
     await channel.send({
-      content: `<@&${NEWS_ROLE_ID}> 📰 **Nieuw GDN artikel!**`,
+      content: `<@&${NEWS_ROLE_ID}> 📰 **New GDN article!**`,
       embeds: [embed],
       allowedMentions: { roles: [NEWS_ROLE_ID] }
     });
@@ -208,6 +208,7 @@ http.createServer((req, res) => {
 }).listen(PORT, () => {
   console.log("🌐 HTTP server actief op poort", PORT);
 });
+
 
 
 
