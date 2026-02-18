@@ -90,23 +90,8 @@ function isModerator(member) {
 }
 
 // ================== BAD WORD FILTER ==================
+const MOD_LOG_CHANNEL_ID = "1464004067146596509";
 const badWords = ['fuck','shit','ass','penis','vagina','nigga','nigger','tits','bitch'];
-
-client.on("messageCreate", async (message) => {
-  if (message.author.bot) return;
-
-  const lower = message.content.toLowerCase();
-
-  if (badWords.some(word => lower.includes(word))) {
-    await message.delete().catch(() => {});
-    const warn = await message.channel.send(
-      `${message.author}, That word is not allowed!`
-    );
-    setTimeout(() => warn.delete().catch(() => {}), 5000);
-    return;
-  }
-});
-
 // ================== COMMAND HANDLER ==================
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
