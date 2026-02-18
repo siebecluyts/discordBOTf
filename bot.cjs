@@ -94,52 +94,56 @@ const MOD_LOG_CHANNEL_ID = "1464004067146596509";
 const bannedWords = ['fuck','shit','ass','penis','vagina','nigga','nigger','tits','bitch'];
 // ================== COMMAND HANDLER ==================
 // ================== AUTO MOD ==================
-client.on('messageCreate', async (message) => {
+// ================== MESSAGE HANDLER ==================
+client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
   if (!message.guild) return;
 
+  const isMod = isModerator(message.member);
+
+  // ================== AUTO MOD ==================
   const content = message.content.toLowerCase();
   const cleaned = content.replace(/[^a-z]/g, "");
-
   const foundWord = bannedWords.find(word => cleaned.includes(word));
-  if (!foundWord) return;
 
-  try {
-    // Verwijder bericht
-    await message.delete().catch(() => {});
+  if (foundWord && !isMod) {
+    try {
+      await message.delete().catch(() => {});
+      await message.member.timeout(10 * 60 * 1000, "Used banned word");
 
-    // Timeout 10 minuten
-    await message.member.timeout(10 * 60 * 1000, "Used banned word");
+      message.channel.send(
+        `🔇 ${message.author}, je bent 10 minuten gemute voor ongepast taalgebruik.`
+      ).then(msg => {
+        setTimeout(() => msg.delete().catch(() => {}), 5000);
+      });
 
-    // Bericht naar kanaal
-    message.channel.send(
-      `🔇 ${message.author}, je bent 10 minuten gemute voor ongepast taalgebruik.`
-    ).then(msg => {
-      setTimeout(() => msg.delete().catch(() => {}), 5000);
-    });
+      const logChannel = message.guild.channels.cache.get(MOD_LOG_CHANNEL_ID);
 
-    // Log naar moderators kanaal
-    const logChannel = message.guild.channels.cache.get(MOD_LOG_CHANNEL_ID);
+      if (logChannel) {
+        logChannel.send(
+          `⚠️ **AUTO-MOD TRIGGERED**\n` +
+          `User: ${message.author.tag}\n` +
+          `ID: ${message.author.id}\n` +
+          `Word: ${foundWord}\n` +
+          `Channel: ${message.channel.name}\n` +
+          `Time: ${new Date().toLocaleString()}`
+        );
+      }
 
-    if (logChannel) {
-      logChannel.send(
-        `⚠️ **AUTO-MOD TRIGGERED**\n` +
-        `User: ${message.author.tag}\n` +
-        `ID: ${message.author.id}\n` +
-        `Word: ${foundWord}\n` +
-        `Channel: ${message.channel.name}\n` +
-        `Time: ${new Date().toLocaleString()}`
-      );
+    } catch (err) {
+      console.error("AutoMod error:", err);
     }
 
-  } catch (err) {
-    console.error("AutoMod error:", err);
+    return;
   }
-});
 
+  // ================== COMMANDS ==================
+  if (!message.content.startsWith("!")) return;
 
-  // ================== MOD ONLY ==================
+  const args = message.content.slice(1).trim().split(/ +/);
+  const cmd = "!" + args.shift().toLowerCase();
 
+  // ------------------ !say ------------------
   if (cmd === "!say") {
     if (!isMod) return;
 
@@ -152,6 +156,7 @@ client.on('messageCreate', async (message) => {
     return message.channel.send(text);
   }
 
+  // ------------------ !news ------------------
   if (cmd === "!news") {
     if (!isMod) return;
 
@@ -160,13 +165,14 @@ client.on('messageCreate', async (message) => {
     return postNews(channel);
   }
 
+  // ------------------ !giverole ------------------
   if (cmd === "!giverole") {
     if (!isMod) return;
 
     const member = message.mentions.members.first();
     if (!member) return message.reply("❌ Mention een user.");
 
-    const roleName = args.slice(1).join(" ");
+    const roleName = args.join(" ");
     if (!roleName) return message.reply("❌ Geef een role naam.");
 
     const role = message.guild.roles.cache.find(
@@ -184,13 +190,14 @@ client.on('messageCreate', async (message) => {
     );
   }
 
+  // ------------------ !removerole ------------------
   if (cmd === "!removerole") {
     if (!isMod) return;
 
     const member = message.mentions.members.first();
     if (!member) return message.reply("❌ Mention een user.");
 
-    const roleName = args.slice(1).join(" ");
+    const roleName = args.join(" ");
     if (!roleName) return message.reply("❌ Geef een role naam.");
 
     const role = message.guild.roles.cache.find(
@@ -207,6 +214,8 @@ client.on('messageCreate', async (message) => {
       `🗑 ${member.user.tag} verloor de role **${role.name}**`
     );
   }
+
+});
 
   // ================== MOD ACTIONS ==================
   
