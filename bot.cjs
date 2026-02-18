@@ -93,12 +93,50 @@ function isModerator(member) {
 const MOD_LOG_CHANNEL_ID = "1464004067146596509";
 const badWords = ['fuck','shit','ass','penis','vagina','nigga','nigger','tits','bitch'];
 // ================== COMMAND HANDLER ==================
-client.on("messageCreate", async (message) => {
+// ================== AUTO MOD ==================
+client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
+  if (!message.guild) return;
 
-  const args = message.content.trim().split(/\s+/);
-  const cmd = args.shift()?.toLowerCase();
-  const isMod = isModerator(message.member);
+  const content = message.content.toLowerCase();
+  const cleaned = content.replace(/[^a-z]/g, "");
+
+  const foundWord = bannedWords.find(word => cleaned.includes(word));
+  if (!foundWord) return;
+
+  try {
+    // Verwijder bericht
+    await message.delete().catch(() => {});
+
+    // Timeout 10 minuten
+    await message.member.timeout(10 * 60 * 1000, "Used banned word");
+
+    // Bericht naar kanaal
+    message.channel.send(
+      `🔇 ${message.author}, je bent 10 minuten gemute voor ongepast taalgebruik.`
+    ).then(msg => {
+      setTimeout(() => msg.delete().catch(() => {}), 5000);
+    });
+
+    // Log naar moderators kanaal
+    const logChannel = message.guild.channels.cache.get(MOD_LOG_CHANNEL_ID);
+
+    if (logChannel) {
+      logChannel.send(
+        `⚠️ **AUTO-MOD TRIGGERED**\n` +
+        `User: ${message.author.tag}\n` +
+        `ID: ${message.author.id}\n` +
+        `Word: ${foundWord}\n` +
+        `Channel: ${message.channel.name}\n` +
+        `Time: ${new Date().toLocaleString()}`
+      );
+    }
+
+  } catch (err) {
+    console.error("AutoMod error:", err);
+  }
+});
+
 
   // ================== MOD ONLY ==================
 
@@ -171,33 +209,7 @@ client.on("messageCreate", async (message) => {
   }
 
   // ================== MOD ACTIONS ==================
-
-  if (!isMod) return;
-
-  if (cmd === "!kick") {
-    const member = message.mentions.members.first();
-    if (!member) return message.reply("No member mentioned!");
-    await member.kick().catch(() => message.reply("❌ Kick mislukt."));
-    message.channel.send(`${member.user.tag} is kicked!`);
-  }
-
-  if (cmd === "!ban") {
-    const member = message.mentions.members.first();
-    if (!member) return message.reply("No member mentioned!");
-    await member.ban().catch(() => message.reply("❌ Ban mislukt."));
-    message.channel.send(`${member.user.tag} is banned!`);
-  }
-
-  if (cmd === "!mute") {
-    const member = message.mentions.members.first();
-    if (!member) return message.reply("No member mentioned!");
-    await member.timeout(10 * 60 * 1000).catch(() =>
-      message.reply("❌ Mute mislukt.")
-    );
-    message.channel.send(`${member.user.tag} is muted for 10 minutes!`);
-  }
-});
-
+  
 // ================== READY ==================
 client.once("ready", async () => {
   console.log(`🤖 Online als ${client.user.tag}`);
