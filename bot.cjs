@@ -91,7 +91,7 @@ function isModerator(member) {
 
 // ================== BAD WORD FILTER ==================
 const MOD_LOG_CHANNEL_ID = "1464004067146596509";
-const badWords = ['fuck','shit','ass','penis','vagina','nigga','nigger','tits','bitch'];
+const bannedWords = ['fuck','shit','ass','penis','vagina','nigga','nigger','tits','bitch'];
 // ================== COMMAND HANDLER ==================
 // ================== AUTO MOD ==================
 client.on('messageCreate', async (message) => {
