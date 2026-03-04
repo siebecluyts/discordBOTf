@@ -102,40 +102,35 @@ client.on("messageCreate", async (message) => {
   const isMod = isModerator(message.member);
 
   // ================== AUTO MOD ==================
-  const content = message.content.toLowerCase();
-  const cleaned = content.replace(/[^a-z]/g, "");
-  const foundWord = bannedWords.find(word => cleaned.includes(word));
+  const cleaned = content.toLowerCase();
+const foundWord = bannedWords.find(word => cleaned.includes(word));
 
-  if (foundWord && !isMod) {
+if (foundWord && !isMod) {
     try {
-      await message.delete().catch(() => {});
-      await message.member.timeout(10 * 60 * 1000, "Used banned word");
+        // Send a log to console for debugging
+        console.log(`User ${message.author.tag} used banned word: ${foundWord}`);
 
-      message.channel.send(
-        `🔇 ${message.author}, je bent 10 minuten gemute voor ongepast taalgebruik.`
-      ).then(msg => {
-        setTimeout(() => msg.delete().catch(() => {}), 5000);
-      });
+        await message.delete().catch(() => {});
+        await message.member.timeout(10 * 60 * 1000, "Used banned word");
 
-      const logChannel = message.guild.channels.cache.get(MOD_LOG_CHANNEL_ID);
-
-      if (logChannel) {
-        logChannel.send(
-          `⚠️ **AUTO-MOD TRIGGERED**\n` +
-          `User: ${message.author.tag}\n` +
-          `ID: ${message.author.id}\n` +
-          `Word: ${foundWord}\n` +
-          `Channel: ${message.channel.name}\n` +
-          `Time: ${new Date().toLocaleString()}`
+        const muteMessage = await message.channel.send(
+            `🔇 ${message.author}, je bent 10 minuten gemute voor ongepast taalgebruik.`
         );
-      }
+        setTimeout(() => muteMessage.delete().catch(() => {}), 5000);
+
+        const logChannel = message.guild.channels.cache.get(MOD_LOG_CHANNEL_ID);
+        if (logChannel) {
+            logChannel.send(
+                `⚠️ **AUTO-MOD TRIGGERED**: ${message.author.tag} used banned word ${foundWord} in ${message.channel.name}`
+            );
+        }
 
     } catch (err) {
-      console.error("AutoMod error:", err);
+        console.error("AutoMod error:", err);
     }
 
     return;
-  }
+}
 
   // ================== COMMANDS ==================
   if (!message.content.startsWith("!")) return;
