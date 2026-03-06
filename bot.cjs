@@ -157,7 +157,6 @@ if (foundWord && !isMod) {
 
     const channel = message.guild.channels.cache.get(CHANNEL_ID);
     if (!channel) return message.reply("❌ News kanaal niet gevonden.");
-        await message.delete().catch(() => {});
     return postNews(channel);
   }
 
