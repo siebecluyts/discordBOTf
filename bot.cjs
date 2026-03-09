@@ -91,9 +91,9 @@ function isModerator(member) {
 
 // ================== BAD WORD FILTER ==================
 const MOD_LOG_CHANNEL_ID = "1464004067146596509";
-const bannedWords = ['fuck','shit','ass','penis','vagina','nigga','nigger','tits','bitch'];
+const bannedWords = ['fuck', 'shit', 'ass', 'penis', 'vagina', 'nigga', 'nigger', 'tits', 'bitch', 'cunt', 'slut'];
+
 // ================== COMMAND HANDLER ==================
-// ================== AUTO MOD ==================
 // ================== MESSAGE HANDLER ==================
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
@@ -102,35 +102,31 @@ client.on("messageCreate", async (message) => {
   const isMod = isModerator(message.member);
 
   // ================== AUTO MOD ==================
-  const cleaned = content.toLowerCase();
-const foundWord = bannedWords.find(word => cleaned.includes(word));
+  const cleaned = message.content.toLowerCase();
+  const foundWord = bannedWords.find(word => cleaned.includes(word));
 
-if (foundWord && !isMod) {
+  if (foundWord && !isMod) {
     try {
-        // Send a log to console for debugging
-        console.log(`User ${message.author.tag} used banned word: ${foundWord}`);
+      console.log(`User ${message.author.tag} used banned word: ${foundWord}`);
+      await message.delete().catch(() => {});
+      await message.member.timeout(10 * 60 * 1000, "Used banned word");
 
-        await message.delete().catch(() => {});
-        await message.member.timeout(10 * 60 * 1000, "Used banned word");
+      const muteMessage = await message.channel.send(
+        `🔇 ${message.author}, je bent 10 minuten gemute voor ongepast taalgebruik.`
+      );
+      setTimeout(() => muteMessage.delete().catch(() => {}), 5000);
 
-        const muteMessage = await message.channel.send(
-            `🔇 ${message.author}, je bent 10 minuten gemute voor ongepast taalgebruik.`
+      const logChannel = message.guild.channels.cache.get(MOD_LOG_CHANNEL_ID);
+      if (logChannel) {
+        logChannel.send(
+          `⚠️ **AUTO-MOD TRIGGERED**: ${message.author.tag} used banned word ${foundWord} in ${message.channel.name}`
         );
-        setTimeout(() => muteMessage.delete().catch(() => {}), 5000);
-
-        const logChannel = message.guild.channels.cache.get(MOD_LOG_CHANNEL_ID);
-        if (logChannel) {
-            logChannel.send(
-                `⚠️ **AUTO-MOD TRIGGERED**: ${message.author.tag} used banned word ${foundWord} in ${message.channel.name}`
-            );
-        }
-
+      }
     } catch (err) {
-        console.error("AutoMod error:", err);
+      console.error("AutoMod error:", err);
     }
-
     return;
-}
+  }
 
   // ================== COMMANDS ==================
   if (!message.content.startsWith("!")) return;
@@ -141,12 +137,9 @@ if (foundWord && !isMod) {
   // ------------------ !say ------------------
   if (cmd === "!say") {
     if (!isMod) return;
-
     let text = args.join(" ");
     if (!text) return message.reply("❌ Geef tekst mee.");
-
     text = text.replace(/<br\s*\/?>/gi, "\n");
-
     await message.delete().catch(() => {});
     return message.channel.send(text);
   }
@@ -212,16 +205,13 @@ if (foundWord && !isMod) {
 
 });
 
-  // ================== MOD ACTIONS ==================
-  
+// ================== MOD ACTIONS ==================
+
 // ================== READY ==================
 client.once("ready", async () => {
   console.log(`🤖 Online als ${client.user.tag}`);
-
   const channel = client.channels.cache.get(CHANNEL_ID);
-
   if (channel) postNews(channel);
-
   setInterval(() => {
     if (channel) postNews(channel);
   }, CHECK_INTERVAL);
@@ -232,7 +222,6 @@ client.login(DISCORD_TOKEN);
 
 // ================== KEEP RENDER ALIVE ==================
 const http = require("http");
-
 const PORT = process.env.PORT || 3000;
 
 http.createServer((req, res) => {
