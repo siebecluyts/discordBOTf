@@ -123,7 +123,7 @@ client.on("messageCreate", async (message) => {
       const logChannel = message.guild.channels.cache.get(MOD_LOG_CHANNEL_ID);
       if (logChannel) {
         logChannel.send(
-          `⚠️ **AUTO-MOD TRIGGERED**: ${message.author.tag} \n used banned word ${foundWord} \n in ${message.channel.name} \n at ${new Date().toISOString()}`
+          `⚠️ **AUTO-MOD TRIGGERED**: @${message.author.tag} \n used banned word "${foundWord}" \n in #${message.channel.name} \n at ${new Date().toISOString()}`
         );
       }
     } catch (err) {
