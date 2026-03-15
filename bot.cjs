@@ -57,10 +57,15 @@ async function postNews(channel) {
     const lastId = getLastArticleId();
     if (String(newest.id) === String(lastId)) return;
 
+    const fullDescription = String(newest.content || "New article published!");
+    const shortDescription = fullDescription.length > 100
+      ? `${fullDescription.slice(0, 100).trimEnd()}…`
+      : fullDescription;
+
     const embed = new EmbedBuilder()
       .setTitle(newest.title)
       .setURL(`https://siebecluyts.github.io/gdn/article?id=${newest.id}`)
-      .setDescription(newest.content || "New article published!")
+      .setDescription(shortDescription)
       .setColor(0x008793)
       .setImage(`https://siebecluyts.github.io/gdn/assets/articlethumbnail/${newest.id}.png`)
       .setFooter({ text: "GDN • New article" })
