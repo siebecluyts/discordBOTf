@@ -98,7 +98,6 @@ function isModerator(member) {
 const MOD_LOG_CHANNEL_ID = "1464004067146596509";
 const bannedWords = ['fuck', 'shit', 'ass', 'penis', 'vagina', 'nigga', 'nigger', 'tits', 'bitch', 'cunt', 'slut'];
 
-// ================== COMMAND HANDLER ==================
 // ================== MESSAGE HANDLER ==================
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
@@ -117,14 +116,14 @@ client.on("messageCreate", async (message) => {
       await message.member.timeout(10 * 60 * 1000, "Used banned word");
 
       const muteMessage = await message.channel.send(
-        `🔇 ${message.author}, je bent 10 minuten gemute voor ongepast taalgebruik.`
+        `🔇 ${message.author}, you have been timed out for 10 minutes for using a banned word.`
       );
       setTimeout(() => muteMessage.delete().catch(() => {}), 5000);
 
       const logChannel = message.guild.channels.cache.get(MOD_LOG_CHANNEL_ID);
       if (logChannel) {
         logChannel.send(
-          `⚠️ **AUTO-MOD TRIGGERED**: ${message.author.tag} used banned word ${foundWord} in ${message.channel.name}`
+          `⚠️ **AUTO-MOD TRIGGERED**: ${message.author.tag} \n used banned word ${foundWord} \n in ${message.channel.name} \n at ${new Date().toISOString()}`
         );
       }
     } catch (err) {
@@ -209,8 +208,6 @@ client.on("messageCreate", async (message) => {
   }
 
 });
-
-// ================== MOD ACTIONS ==================
 
 // ================== READY ==================
 client.once("ready", async () => {
