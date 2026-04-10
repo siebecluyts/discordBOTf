@@ -213,10 +213,6 @@ client.on("messageCreate", async (message) => {
 client.once("ready", async () => {
   console.log(`🤖 Online als ${client.user.tag}`);
   const channel = client.channels.cache.get(CHANNEL_ID);
-  if (channel) postNews(channel);
-  setInterval(() => {
-    if (channel) postNews(channel);
-  }, CHECK_INTERVAL);
 });
 
 // ================== LOGIN ==================
